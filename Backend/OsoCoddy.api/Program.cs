@@ -61,12 +61,16 @@ builder.Services
 
 builder.Services.AddAuthorization();
 
+var frontendUrl =
+    builder.Configuration["FrontendUrl"]
+    ?? "http://localhost:5173";
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("OsoCoddyWeb", policy =>
     {
         policy
-            .WithOrigins("http://localhost:5173")
+            .WithOrigins(frontendUrl.TrimEnd('/'))
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
