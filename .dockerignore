@@ -1,0 +1,7 @@
+.git/
+**/.DS_Store
+Web/
+Backend/OsoCoddy.api/bin/
+Backend/OsoCoddy.api/obj/
+Backend/OsoCoddy.api/appsettings.json
+Backend/OsoCoddy.api/appsettings.Development.jsonø
