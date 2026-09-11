@@ -1,0 +1,647 @@
+.profile-page {
+  min-height: 100vh;
+
+  color: #f7f7fb;
+  background: #0c0c12;
+}
+
+
+.profile-topbar {
+  min-height: 72px;
+
+  padding: 0 7%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  border-bottom: 1px solid #23232e;
+
+  background: rgba(12, 12, 18, 0.95);
+}
+
+
+.profile-logo {
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  color: white;
+
+  font-size: 20px;
+
+  text-decoration: none;
+}
+
+
+.profile-logo strong span {
+  color: #8b5cf6;
+}
+
+
+.profile-back {
+  color: #aaaabb;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  text-decoration: none;
+
+  transition: 0.2s;
+}
+
+
+.profile-back:hover {
+  color: white;
+}
+
+
+.profile-main {
+  width: min(1100px, 90%);
+
+  margin: 0 auto;
+
+  padding: 50px 0 70px;
+}
+
+
+/* =========================================
+   USUARIO
+   ========================================= */
+
+.profile-hero {
+  padding: 30px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 22px;
+
+  background:
+    radial-gradient(
+      circle at 0% 0%,
+      rgba(124, 58, 237, 0.18),
+      transparent 40%
+    ),
+    #12121a;
+
+  border: 1px solid #292936;
+  border-radius: 20px;
+}
+
+
+.profile-avatar {
+  width: 82px;
+  height: 82px;
+
+  flex-shrink: 0;
+
+  display: grid;
+  place-items: center;
+
+  color: white;
+
+  background:
+    linear-gradient(
+      135deg,
+      #7c3aed,
+      #a855f7
+    );
+
+  border-radius: 22px;
+
+  font-size: 32px;
+  font-weight: 800;
+}
+
+
+.profile-user-info {
+  min-width: 0;
+}
+
+
+.profile-label {
+  color: #8b5cf6;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  letter-spacing: 1.4px;
+}
+
+
+.profile-user-info h1 {
+  margin: 6px 0 5px;
+
+  font-size: 28px;
+}
+
+
+.profile-user-info p {
+  margin: 0;
+
+  color: #9696a5;
+
+  font-size: 13px;
+
+  word-break: break-word;
+}
+
+
+/* =========================================
+   ESTADÍSTICAS
+   ========================================= */
+
+.profile-stats {
+  margin-top: 20px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 14px;
+}
+
+
+.profile-stats article {
+  padding: 20px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  background: #12121a;
+
+  border: 1px solid #292936;
+  border-radius: 16px;
+}
+
+
+.profile-stat-icon {
+  width: 45px;
+  height: 45px;
+
+  flex-shrink: 0;
+
+  display: grid;
+  place-items: center;
+
+  background: #1b1b25;
+
+  border-radius: 12px;
+
+  font-size: 22px;
+}
+
+
+.profile-stats span {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #8d8d9d;
+
+  font-size: 11px;
+}
+
+
+.profile-stats strong {
+  font-size: 18px;
+}
+
+
+/* =========================================
+   LOGROS
+   ========================================= */
+
+.profile-achievements {
+  margin-top: 35px;
+}
+
+
+.achievements-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: 25px;
+}
+
+
+.achievements-header > div > span {
+  color: #8b5cf6;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  letter-spacing: 1.4px;
+}
+
+
+.achievements-header h2 {
+  margin: 5px 0;
+
+  font-size: 25px;
+}
+
+
+.achievements-header p {
+  margin: 0;
+
+  color: #8e8e9e;
+
+  font-size: 13px;
+}
+
+
+.achievement-counter {
+  min-width: 115px;
+
+  padding: 12px 17px;
+
+  background: #12121a;
+
+  border: 1px solid #292936;
+  border-radius: 13px;
+
+  text-align: center;
+}
+
+
+.achievement-counter strong {
+  display: block;
+
+  color: #a78bfa;
+
+  font-size: 19px;
+}
+
+
+.achievement-counter span {
+  color: #858596;
+
+  font-size: 10px;
+}
+
+
+.achievements-progress-info {
+  margin-top: 25px;
+  margin-bottom: 8px;
+
+  display: flex;
+  justify-content: space-between;
+
+  color: #8d8d9d;
+
+  font-size: 11px;
+}
+
+
+.achievements-progress-info strong {
+  color: #a78bfa;
+}
+
+
+.achievements-progress-bar {
+  width: 100%;
+  height: 7px;
+
+  overflow: hidden;
+
+  background: #1b1b25;
+
+  border-radius: 999px;
+}
+
+
+.achievements-progress-bar div {
+  height: 100%;
+
+  background:
+    linear-gradient(
+      90deg,
+      #7c3aed,
+      #a855f7
+    );
+
+  border-radius: inherit;
+
+  transition:
+    width 0.4s ease;
+}
+
+
+.achievements-grid {
+  margin-top: 22px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 14px;
+}
+
+
+.achievement-card {
+  min-width: 0;
+
+  padding: 20px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 17px;
+
+  border-radius: 16px;
+
+  transition:
+    transform 0.2s,
+    border-color 0.2s;
+}
+
+
+.achievement-card-unlocked {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(124, 58, 237, 0.11),
+      #12121a 55%
+    );
+
+  border:
+    1px solid
+    rgba(139, 92, 246, 0.36);
+}
+
+
+.achievement-card-unlocked:hover {
+  transform:
+    translateY(-2px);
+
+  border-color: #7c3aed;
+}
+
+
+.achievement-card-locked {
+  opacity: 0.55;
+
+  background: #111118;
+
+  border: 1px solid #252530;
+}
+
+
+.profile-achievement-icon {
+  width: 60px;
+  height: 60px;
+
+  flex-shrink: 0;
+
+  display: grid;
+  place-items: center;
+
+  background: #1b1b25;
+
+  border-radius: 15px;
+
+  font-size: 30px;
+}
+
+
+.profile-achievement-content {
+  min-width: 0;
+}
+
+
+.achievement-status {
+  display: block;
+
+  margin-bottom: 5px;
+
+  font-size: 9px;
+  font-weight: 800;
+
+  letter-spacing: 1px;
+}
+
+
+.achievement-status-unlocked {
+  color: #a78bfa;
+}
+
+
+.achievement-status-locked {
+  color: #71717f;
+}
+
+
+.profile-achievement-content h3 {
+  margin: 0 0 5px;
+
+  font-size: 15px;
+}
+
+
+.profile-achievement-content p {
+  margin: 0;
+
+  color: #9292a1;
+
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+
+.profile-achievement-content small {
+  display: block;
+
+  margin-top: 8px;
+
+  color: #6f6f80;
+
+  font-size: 9px;
+}
+
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+@media (max-width: 750px) {
+
+  .profile-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .achievements-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
+
+
+@media (max-width: 550px) {
+
+  .profile-topbar {
+    padding: 0 5%;
+  }
+
+  .profile-main {
+    width: 92%;
+
+    padding-top: 30px;
+  }
+
+  .profile-hero {
+    align-items: flex-start;
+
+    padding: 22px;
+  }
+
+  .profile-avatar {
+    width: 65px;
+    height: 65px;
+
+    font-size: 26px;
+  }
+
+  .achievements-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .achievement-counter {
+    width: 100%;
+
+    box-sizing: border-box;
+  }
+
+}
+
+.profile-level {
+  margin-top: 22px;
+  padding: 24px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 20px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(124, 58, 237, 0.14),
+      #12121a
+    );
+
+  border: 1px solid rgba(139, 92, 246, 0.35);
+  border-radius: 18px;
+}
+
+.profile-level-icon {
+  width: 72px;
+  height: 72px;
+
+  flex-shrink: 0;
+
+  display: grid;
+  place-items: center;
+
+  background: #1b1b25;
+
+  border-radius: 18px;
+
+  font-size: 34px;
+}
+
+.profile-level-content {
+  width: 100%;
+  min-width: 0;
+}
+
+.profile-level-label {
+  color: #a78bfa;
+
+  font-size: 10px;
+  font-weight: 800;
+
+  letter-spacing: 1.3px;
+}
+
+.profile-level-content h2 {
+  margin: 4px 0 16px;
+
+  font-size: 23px;
+}
+
+.profile-level-progress-info {
+  margin-bottom: 8px;
+
+  display: flex;
+  justify-content: space-between;
+
+  color: #9292a1;
+
+  font-size: 11px;
+}
+
+.profile-level-progress-info strong {
+  color: #a78bfa;
+}
+
+.profile-level-progress-bar {
+  width: 100%;
+  height: 8px;
+
+  overflow: hidden;
+
+  background: #1d1d27;
+
+  border-radius: 999px;
+}
+
+.profile-level-progress-bar div {
+  height: 100%;
+
+  background:
+    linear-gradient(
+      90deg,
+      #7c3aed,
+      #a855f7
+    );
+
+  border-radius: inherit;
+
+  transition: width 0.4s ease;
+}
+
+.profile-level-content p {
+  margin: 11px 0 0;
+
+  color: #8f8f9f;
+
+  font-size: 11px;
+}
+
+.profile-level-content p strong {
+  color: #d7d7df;
+}
+
+@media (max-width: 550px) {
+  .profile-level {
+    align-items: flex-start;
+  }
+
+  .profile-level-icon {
+    width: 58px;
+    height: 58px;
+
+    font-size: 28px;
+  }
+}
