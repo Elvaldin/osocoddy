@@ -1,4 +1,6 @@
-using System.Text.Json;
+using System;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace OsoCoddy.Api.Services;
 
@@ -12,16 +14,18 @@ public record ChallengeJudgeResult(
 
 public class ChallengeJudgeService
 {
-    private readonly CodeExecutionService _executor;
-
-    public ChallengeJudgeService(
-        CodeExecutionService executor
+    public Task<ChallengeJudgeResult> CheckAsync(
+        string courseSlug,
+        int lessonId,
+        string code
     )
     {
-        _executor = executor;
+        return Task.FromResult(
+            Check(courseSlug, lessonId, code)
+        );
     }
 
-    public async Task<ChallengeJudgeResult> CheckAsync(
+    private static ChallengeJudgeResult Check(
         string courseSlug,
         int lessonId,
         string code
@@ -46,651 +50,189 @@ public class ChallengeJudgeService
             );
         }
 
-
-        /*
-         * Marcadores secretos diferentes
-         * en cada ejecución.
-         */
-        var markerId =
-            Guid.NewGuid().ToString("N");
-
-        var correctMarker =
-            $"__OSOCODDY_CORRECT_{markerId}__";
-
-        var wrongMarker =
-            $"__OSOCODDY_WRONG_{markerId}__";
-
-
-        /*
-         * Código original convertido
-         * a un literal seguro.
-         */
-        var sourceLiteral =
-            JsonSerializer.Serialize(code);
-
-
-        /*
-         * Pruebas ocultas por lección.
-         */
-        var hiddenTests =
-            lessonId switch
-            {
-                1 => $"""
-
-print("{correctMarker}")
-
-""",
-
-                2 => $"""
-
-print("{correctMarker}")
-
-""",
-
-                3 => $"""
-
-try:
-    assert isinstance(lenguaje, str)
-    assert len(lenguaje.strip()) > 0
-
-    assert isinstance(nivel, str)
-    assert len(nivel.strip()) > 0
-
-    print("{correctMarker}")
-
-except (AssertionError, NameError):
-    print("{wrongMarker}")
-
-""",
-
-                4 => $"""
-
-try:
-    assert isinstance(nombre, str)
-    assert len(nombre.strip()) > 0
-
-    assert type(edad) is int
-
-    assert type(precio) in (int, float)
-
-    assert type(activo) is bool
-
-    print("{correctMarker}")
-
-except (AssertionError, NameError):
-    print("{wrongMarker}")
-
-""",
-
-                5 => $"""
-
-import ast
-
-try:
-    __osocoddy_source = {sourceLiteral}
-    __osocoddy_tree = ast.parse(__osocoddy_source)
-
-    __has_if_else = any(
-        isinstance(node, ast.If)
-        and len(node.orelse) > 0
-        for node in ast.walk(__osocoddy_tree)
-    )
-
-    assert __has_if_else
-    assert edad == 20
-
-    print("{correctMarker}")
-
-except (AssertionError, NameError, SyntaxError):
-    print("{wrongMarker}")
-
-""",
-
-                6 => $"""
-
-import ast
-
-try:
-    __osocoddy_source = {sourceLiteral}
-    __osocoddy_tree = ast.parse(__osocoddy_source)
-
-    __has_for = any(
-        isinstance(node, ast.For)
-        for node in ast.walk(__osocoddy_tree)
-    )
-
-    assert __has_for
-
-    print("{correctMarker}")
-
-except (AssertionError, NameError, SyntaxError):
-    print("{wrongMarker}")
-
-""",
-
-                7 => $"""
-
-import ast
-
-try:
-    __osocoddy_source = {sourceLiteral}
-    __osocoddy_tree = ast.parse(__osocoddy_source)
-
-    __has_while = any(
-        isinstance(node, ast.While)
-        for node in ast.walk(__osocoddy_tree)
-    )
-
-    assert __has_while
-
-    print("{correctMarker}")
-
-except (AssertionError, NameError, SyntaxError):
-    print("{wrongMarker}")
-
-""",
-
-                8 => $"""
-
-import ast
-
-try:
-    __osocoddy_source = {sourceLiteral}
-    __osocoddy_tree = ast.parse(__osocoddy_source)
-
-    __has_function = any(
-        isinstance(node, ast.FunctionDef)
-        and node.name == "saludar"
-        for node in ast.walk(__osocoddy_tree)
-    )
-
-    assert __has_function
-
-    assert callable(saludar)
-
-    assert (
-        saludar("Oswaldo")
-        == "Hola, Oswaldo"
-    )
-
-    assert (
-        saludar("Coddy")
-        == "Hola, Coddy"
-    )
-
-    print("{correctMarker}")
-
-except (
-    AssertionError,
-    NameError,
-    SyntaxError,
-    TypeError
-):
-    print("{wrongMarker}")
-
-""",
-
-                9 => $"""
-
-import ast
-
-try:
-    __osocoddy_source = {sourceLiteral}
-    __osocoddy_tree = ast.parse(__osocoddy_source)
-
-    __has_persona_class = any(
-        isinstance(node, ast.ClassDef)
-        and node.name == "Persona"
-        for node in ast.walk(__osocoddy_tree)
-    )
-
-    assert __has_persona_class
-    assert isinstance(Persona, type)
-
-    print("{correctMarker}")
-
-except (
-    AssertionError,
-    NameError,
-    SyntaxError
-):
-    print("{wrongMarker}")
-
-""",
-
-                10 => $"""
-
-try:
-    assert isinstance(Persona, type)
-
-    assert isinstance(
-        persona1,
-        Persona
-    )
-
-    assert hasattr(
-        persona1,
-        "nombre"
-    )
-
-    assert persona1.nombre == "Coddy"
-
-    print("{correctMarker}")
-
-except (
-    AssertionError,
-    NameError,
-    AttributeError,
-    TypeError
-):
-    print("{wrongMarker}")
-
-""",
-
-                11 => $"""
-
-import ast
-
-try:
-    __osocoddy_source = {sourceLiteral}
-    __osocoddy_tree = ast.parse(__osocoddy_source)
-
-    __has_init = any(
-        isinstance(node, ast.FunctionDef)
-        and node.name == "__init__"
-        for node in ast.walk(__osocoddy_tree)
-    )
-
-    assert __has_init
-
-    __test_persona = Persona("Oswaldo", 24)
-
-    assert (
-        __test_persona.nombre
-        == "Oswaldo"
-    )
-
-    assert (
-        __test_persona.edad
-        == 24
-    )
-
-    print("{correctMarker}")
-
-except (
-    AssertionError,
-    NameError,
-    AttributeError,
-    TypeError,
-    SyntaxError
-):
-    print("{wrongMarker}")
-
-""",
-
-                12 => $"""
-
-import ast
-
-try:
-    __osocoddy_source = {sourceLiteral}
-    __osocoddy_tree = ast.parse(__osocoddy_source)
-
-    __has_saludar = any(
-        isinstance(node, ast.FunctionDef)
-        and node.name == "saludar"
-        for node in ast.walk(__osocoddy_tree)
-    )
-
-    assert __has_saludar
-
-    __persona1 = Persona("Oswaldo")
-
-    __persona2 = Persona("Coddy")
-
-    assert (
-        __persona1.saludar()
-        == "Hola, Oswaldo"
-    )
-
-    assert (
-        __persona2.saludar()
-        == "Hola, Coddy"
-    )
-
-    print("{correctMarker}")
-
-except (
-    AssertionError,
-    NameError,
-    AttributeError,
-    TypeError,
-    SyntaxError
-):
-    print("{wrongMarker}")
-
-""",
-
-                _ => ""
-            };
-
-
-        var codeToExecute =
-            code +
-            Environment.NewLine +
-            hiddenTests;
-
-
-        /*
-         * Ejecutamos mediante nuestro
-         * CodeExecutionService.
-         */
-        var execution =
-            await _executor.RunPythonAsync(
-                codeToExecute
-            );
-
-
-        if (execution.TimedOut)
+        if (string.IsNullOrWhiteSpace(code))
         {
-            return new ChallengeJudgeResult(
-                Supported: true,
-                Correct: false,
-                Message:
-                    "Tu código tardó demasiado en ejecutarse.",
-                Output: "",
-                Error:
-                    "Tiempo de ejecución excedido."
+            return Wrong(
+                "Debes escribir una solución."
             );
         }
 
-
-        if (!execution.Success)
+        return lessonId switch
         {
-            return new ChallengeJudgeResult(
-                Supported: true,
-                Correct: false,
-                Message:
-                    "Tu código contiene un error de Python.",
-                Output: "",
-                Error:
-                    execution.Error
+            1 => CheckLesson1(code),
+            2 => CheckLesson2(code),
+            3 => CheckRequirements(
+                code,
+                "Crea las variables lenguaje y nivel y muestra sus valores con print().",
+                @"^\s*lenguaje\s*=\s*[""'][^""'\r\n]+[""']",
+                @"^\s*nivel\s*=\s*[""'][^""'\r\n]+[""']",
+                @"\bprint\s*\([^)]*\blenguaje\b",
+                @"\bprint\s*\([^)]*\bnivel\b"
+            ),
+            4 => CheckRequirements(
+                code,
+                "Crea nombre, edad, precio y activo usando los tipos de datos correctos.",
+                @"^\s*nombre\s*=\s*[""'][^""'\r\n]+[""']",
+                @"^\s*edad\s*=\s*-?\d+\s*$",
+                @"^\s*precio\s*=\s*-?\d+(?:\.\d+)?\s*$",
+                @"^\s*activo\s*=\s*(?:True|False)\s*$"
+            ),
+            5 => CheckRequirements(
+                code,
+                "Usa if y else para comprobar la edad y mostrar el resultado correcto.",
+                @"^\s*edad\s*=\s*20\s*$",
+                @"\bif\b[^:\r\n]*:",
+                @"\belse\s*:",
+                @"Mayor de edad",
+                @"Menor de edad"
+            ),
+            6 => CheckRequirements(
+                code,
+                "Usa un bucle for para mostrar exactamente los números del 1 al 5.",
+                @"\bfor\s+\w+\s+in\s+range\s*\(\s*1\s*,\s*6\s*\)\s*:",
+                @"\bprint\s*\("
+            ),
+            7 => CheckRequirements(
+                code,
+                "Usa un bucle while para mostrar exactamente los números del 1 al 5.",
+                @"^\s*numero\s*=\s*1\s*$",
+                @"\bwhile\s+numero\s*<=\s*5\s*:",
+                @"\bprint\s*\(\s*numero\s*\)",
+                @"numero\s*(?:\+=\s*1|=\s*numero\s*\+\s*1)"
+            ),
+            8 => CheckRequirements(
+                code,
+                "La función saludar debe recibir un nombre y devolver 'Hola, ' seguido del nombre.",
+                @"\bdef\s+saludar\s*\(\s*nombre\s*\)\s*:",
+                @"\breturn\b[^\r\n]*\bnombre\b",
+                @"Hola"
+            ),
+            9 => CheckRequirements(
+                code,
+                "Debes crear una clase llamada Persona.",
+                @"^\s*class\s+Persona\s*(?:\([^)]*\))?\s*:"
+            ),
+            10 => CheckRequirements(
+                code,
+                "Crea persona1 como objeto de Persona y asigna 'Coddy' a persona1.nombre.",
+                @"^\s*class\s+Persona\s*(?:\([^)]*\))?\s*:",
+                @"^\s*persona1\s*=\s*Persona\s*\(\s*\)\s*$",
+                @"^\s*persona1\.nombre\s*=\s*[""']Coddy[""']\s*$"
+            ),
+            11 => CheckRequirements(
+                code,
+                "El constructor debe guardar nombre y edad en el objeto.",
+                @"^\s*class\s+Persona\s*(?:\([^)]*\))?\s*:",
+                @"\bdef\s+__init__\s*\(\s*self\s*,\s*nombre\s*,\s*edad\s*\)\s*:",
+                @"self\.nombre\s*=\s*nombre",
+                @"self\.edad\s*=\s*edad"
+            ),
+            12 => CheckRequirements(
+                code,
+                "El método saludar() debe devolver 'Hola, ' seguido del nombre del objeto.",
+                @"^\s*class\s+Persona\s*(?:\([^)]*\))?\s*:",
+                @"\bdef\s+__init__\s*\(\s*self\s*,\s*nombre\s*\)\s*:",
+                @"self\.nombre\s*=\s*nombre",
+                @"\bdef\s+saludar\s*\(\s*self\s*\)\s*:",
+                @"\breturn\b[^\r\n]*self\.nombre",
+                @"Hola"
+            ),
+            _ => Wrong(
+                "Este reto todavía no está disponible."
+            )
+        };
+    }
+
+    private static ChallengeJudgeResult CheckLesson1(
+        string code
+    )
+    {
+        var hasPersonalMessage = Has(
+            code,
+            @"\bprint\s*\(\s*[""'][^""'\r\n]*[A-Za-zÁÉÍÓÚáéíóúÑñ][^""'\r\n]*[""']\s*\)"
+        );
+
+        var stillUsesExample = code.Contains(
+            "osoCoddy",
+            StringComparison.OrdinalIgnoreCase
+        );
+
+        return hasPersonalMessage && !stillUsesExample
+            ? Correct()
+            : Wrong(
+                "Modifica el print para que muestre tu nombre."
             );
-        }
+    }
 
-
-        var output =
-            execution.Output;
-
-
-        /*
-         * Buscamos el veredicto de
-         * las pruebas ocultas.
-         */
-        var lines =
-            output
-                .Replace("\r\n", "\n")
-                .Split(
-                    '\n',
-                    StringSplitOptions
-                        .RemoveEmptyEntries
-                );
-
-
-        var verdict =
-            lines
-                .LastOrDefault()?
-                .Trim();
-
-
-        /*
-         * Quitamos los marcadores antes
-         * de devolver stdout al frontend.
-         */
-        var studentOutput =
-            output
-                .Replace(
-                    correctMarker,
-                    ""
-                )
-                .Replace(
-                    wrongMarker,
-                    ""
-                )
-                .Replace(
-                    "\r\n",
-                    "\n"
-                )
-                .Trim();
-
-
-        var challengeCorrect = false;
-
-        var challengeMessage =
-            "Tu código funciona, pero todavía no cumple con todos los requisitos del reto.";
-
-
-        /*
-         * LECCIÓN 1
-         */
-        if (lessonId == 1)
-        {
-            challengeCorrect =
-                verdict == correctMarker &&
-                !string.IsNullOrWhiteSpace(
-                    studentOutput
-                ) &&
-                !studentOutput.Contains(
-                    "osoCoddy",
-                    StringComparison.OrdinalIgnoreCase
-                );
-
-            if (!challengeCorrect)
-            {
-                challengeMessage =
-                    "Modifica el print para que muestre tu nombre.";
-            }
-        }
-
-
-        /*
-         * LECCIÓN 2
-         */
-        else if (lessonId == 2)
-        {
-            challengeCorrect =
-                verdict == correctMarker &&
-                studentOutput ==
-                    "Estoy aprendiendo Python en osoCoddy.";
-
-            if (!challengeCorrect)
-            {
-                challengeMessage =
-                    "La salida todavía no coincide con la frase solicitada.";
-            }
-        }
-
-
-        /*
-         * LECCIÓN 3
-         */
-        else if (lessonId == 3)
-        {
-            var usesPrint =
-                code.Contains(
-                    "print(",
-                    StringComparison.OrdinalIgnoreCase
-                );
-
-            challengeCorrect =
-                verdict == correctMarker &&
-                usesPrint &&
-                !string.IsNullOrWhiteSpace(
-                    studentOutput
-                );
-
-            if (!challengeCorrect)
-            {
-                challengeMessage =
-                    "Crea las variables lenguaje y nivel y muestra sus valores con print().";
-            }
-        }
-
-
-        /*
-         * LECCIÓN 4
-         */
-        else if (lessonId == 4)
-        {
-            challengeCorrect =
-                verdict == correctMarker;
-        }
-
-
-        /*
-         * LECCIÓN 5
-         */
-        else if (lessonId == 5)
-        {
-            challengeCorrect =
-                verdict == correctMarker &&
-                studentOutput ==
-                    "Mayor de edad";
-
-            if (!challengeCorrect)
-            {
-                challengeMessage =
-                    "Usa if y else para comprobar la edad y mostrar el resultado correcto.";
-            }
-        }
-
-
-        /*
-         * LECCIÓN 6
-         */
-        else if (lessonId == 6)
-        {
-            const string expectedOutput =
-                "1\n2\n3\n4\n5";
-
-            challengeCorrect =
-                verdict == correctMarker &&
-                studentOutput ==
-                    expectedOutput;
-
-            if (!challengeCorrect)
-            {
-                challengeMessage =
-                    "Usa un bucle for para mostrar exactamente los números del 1 al 5.";
-            }
-        }
-
-
-        /*
-         * LECCIÓN 7
-         */
-        else if (lessonId == 7)
-        {
-            const string expectedOutput =
-                "1\n2\n3\n4\n5";
-
-            challengeCorrect =
-                verdict == correctMarker &&
-                studentOutput ==
-                    expectedOutput;
-
-            if (!challengeCorrect)
-            {
-                challengeMessage =
-                    "Usa un bucle while para mostrar exactamente los números del 1 al 5.";
-            }
-        }
-
-
-        /*
-         * LECCIÓN 8
-         */
-        else if (lessonId == 8)
-        {
-            challengeCorrect =
-                verdict == correctMarker;
-
-            if (!challengeCorrect)
-            {
-                challengeMessage =
-                    "La función saludar debe recibir un nombre y devolver 'Hola, ' seguido del nombre.";
-            }
-        }
-
-        else if (lessonId == 9)
-        {
-            challengeCorrect =
-                verdict == correctMarker;
-
-            if (!challengeCorrect)
-            {
-                challengeMessage =
-                    "Debes crear una clase llamada Persona.";
-            }
-        }
-
-        else if (lessonId == 10)
-        {
-            challengeCorrect =
-                verdict == correctMarker;
-
-            if (!challengeCorrect)
-            {
-                challengeMessage =
-                    "Crea persona1 como objeto de Persona y asigna 'Coddy' a persona1.nombre.";
-            }
-        }
-
-        else if (lessonId == 11)
-        {
-            challengeCorrect =
-                verdict == correctMarker;
-
-            if (!challengeCorrect)
-            {
-                challengeMessage =
-                    "El constructor debe recibir nombre y edad y guardarlos en self.nombre y self.edad.";
-            }
-        }
-
-        else if (lessonId == 12)
-        {
-            challengeCorrect =
-                verdict == correctMarker;
-
-            if (!challengeCorrect)
-            {
-                challengeMessage =
-                    "El método saludar() debe devolver 'Hola, ' seguido del nombre del objeto.";
-            }
-        }
-
-        if (challengeCorrect)
-        {
-            return new ChallengeJudgeResult(
-                Supported: true,
-                Correct: true,
-                Message:
-                    "¡Reto correcto! 🎉",
-                Output:
-                    studentOutput,
-                Error: null
+    private static ChallengeJudgeResult CheckLesson2(
+        string code
+    )
+    {
+        var correct =
+            Has(code, @"\bprint\s*\(") &&
+            code.Contains(
+                "Estoy aprendiendo Python en osoCoddy.",
+                StringComparison.Ordinal
             );
+
+        return correct
+            ? Correct()
+            : Wrong(
+                "La salida debe mostrar exactamente: Estoy aprendiendo Python en osoCoddy."
+            );
+    }
+
+    private static ChallengeJudgeResult CheckRequirements(
+        string code,
+        string errorMessage,
+        params string[] patterns
+    )
+    {
+        foreach (var pattern in patterns)
+        {
+            if (!Has(code, pattern))
+            {
+                return Wrong(errorMessage);
+            }
         }
 
+        return Correct();
+    }
 
+    private static bool Has(
+        string code,
+        string pattern
+    )
+    {
+        return Regex.IsMatch(
+            code,
+            pattern,
+            RegexOptions.IgnoreCase |
+            RegexOptions.Multiline |
+            RegexOptions.CultureInvariant
+        );
+    }
+
+    private static ChallengeJudgeResult Correct()
+    {
+        return new ChallengeJudgeResult(
+            Supported: true,
+            Correct: true,
+            Message: "¡Reto correcto! 🎉",
+            Output: "",
+            Error: null
+        );
+    }
+
+    private static ChallengeJudgeResult Wrong(
+        string message
+    )
+    {
         return new ChallengeJudgeResult(
             Supported: true,
             Correct: false,
-            Message:
-                challengeMessage,
-            Output:
-                studentOutput,
+            Message: message,
+            Output: "",
             Error: null
         );
     }
