@@ -2,12 +2,22 @@
 
 Plataforma web educativa para aprender programación mediante cursos, lecciones, retos de código y seguimiento personalizado del progreso.
 
-## Funciones principales
+> [!IMPORTANT]
+> **Estado actual: v0.1 Alpha.** El proyecto es funcional y está publicado, pero continúa en desarrollo activo.
+
+## Demostración
+
+- Aplicación: [osocoddy-web.vercel.app](https://osocoddy-web.vercel.app/)
+- Estado de la API: [API Health](https://osocoddy-production.up.railway.app/api/health)
+
+
+## Funciones disponibles
 
 - Registro e inicio de sesión de usuarios.
 - Autenticación mediante JWT.
 - Rutas y lecciones de programación.
-- Retos con ejecución y validación de código.
+- Ejecución segura de Python en el navegador mediante Pyodide.
+- Validación de los requisitos de cada reto desde la API.
 - Seguimiento de lecciones completadas.
 - Sistema de experiencia, niveles y rachas.
 - Logros y progreso por usuario.
@@ -23,6 +33,7 @@ Plataforma web educativa para aprender programación mediante cursos, lecciones,
 - Entity Framework Core
 - PostgreSQL
 - Autenticación JWT
+- Docker
 
 ### Frontend
 
@@ -31,6 +42,14 @@ Plataforma web educativa para aprender programación mediante cursos, lecciones,
 - Vite
 - React Router
 - HTML y CSS
+- Pyodide y Web Workers
+
+### Infraestructura
+
+- Vercel para el frontend.
+- Railway para la API.
+- PostgreSQL alojado en Railway.
+- Docker para construir y desplegar el backend.
 
 ## Estructura del proyecto
 
@@ -98,9 +117,28 @@ npm run dev
 
 El frontend estará disponible normalmente en `http://localhost:5173`.
 
-## Estado
+## Estado del proyecto
 
-Proyecto en desarrollo activo.
+La versión pública actual corresponde a **osoCoddy v0.1 Alpha**.
+
+### Implementado
+
+- Autenticación y rutas protegidas.
+- Curso inicial de Python con 12 lecciones.
+- Ejecución de Python dentro del navegador.
+- Validación de mini retos.
+- Seguimiento de progreso y lecciones completadas.
+- Sistema de XP, niveles, rachas y logros.
+- Frontend, API y base de datos desplegados.
+
+### En desarrollo
+
+- Nuevos cursos y lenguajes de programación.
+- Más ejercicios y proyectos prácticos.
+- Mejoras en el editor de código y retroalimentación.
+- Pruebas automatizadas y mejoras de accesibilidad.
+- Aplicación móvil.
+- Nuevas funciones para perfiles y rutas de aprendizaje.
 
 ## Autor
 
