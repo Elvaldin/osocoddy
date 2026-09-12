@@ -9,10 +9,10 @@ import {
 import {
   completeLesson,
   getMyProgress,
-  runPythonCode,
   checkChallenge,
   type UnlockedAchievement,
 } from '../services/api'
+import { runPythonInBrowser } from '../services/pythonRunner'
 import './LessonDetail.css'
 
 interface LevelUpInfo {
@@ -422,7 +422,7 @@ const handleRunCode = async () => {
   setCodeExecutedSuccessfully(false)
 
   try {
-    const result = await runPythonCode(
+    const result = await runPythonInBrowser(
       challengeCode
     )
 
